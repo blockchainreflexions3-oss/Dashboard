@@ -135,16 +135,23 @@ async function getDashboardData(period: string) {
         return { ...h, cumulative: runningTotal };
     });
 
-    // Process Zone Distribution (Revenue)
-    const zoneMap = new Map<string, number>();
+    // Process Zone Distribution (Revenue & Count)
+    const zoneMap = new Map<string, { revenue: number, count: number }>();
     deals.forEach((d: any) => {
         const z = d.property.zone || "AUTRE";
-        zoneMap.set(z, (zoneMap.get(z) || 0) + d.agencyFee);
+        const current = zoneMap.get(z) || { revenue: 0, count: 0 };
+        // Count only strict transactions (Vente/Location), but sum all revenue
+        const isTransaction = d.type === 'LOCATION' || d.type === 'VENTE';
+        zoneMap.set(z, {
+            revenue: current.revenue + d.agencyFee,
+            count: current.count + (isTransaction ? 1 : 0)
+        });
     });
 
-    const zoneDistribution = Array.from(zoneMap.entries()).map(([name, value]) => ({
+    const zoneDistribution = Array.from(zoneMap.entries()).map(([name, data]) => ({
         name: name.replace('LYON_', 'Lyon ').replace('_', ' '),
-        value
+        value: data.revenue,
+        count: data.count
     }));
 
     // Format All Deals

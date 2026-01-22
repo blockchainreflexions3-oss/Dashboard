@@ -195,9 +195,27 @@ export function ZonePieChart({ data }: { data: any[] }) {
                             ))}
                         </Pie>
                         <Tooltip
-                            contentStyle={{ backgroundColor: '#1f1f1f', border: '1px solid #333', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}
-                            itemStyle={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}
-                            formatter={(value: number) => `${value.toLocaleString()} €`}
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const d = payload[0].payload;
+                                    return (
+                                        <div style={{ backgroundColor: '#1f1f1f', border: '1px solid #333', padding: '12px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                                            <p style={{ color: '#fff', fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>{d.name}</p>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '0.9rem' }}>
+                                                    <span style={{ color: '#a0a0a0' }}>Transactions :</span>
+                                                    <span style={{ color: '#fff', fontWeight: 500 }}>{d.count}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '0.9rem' }}>
+                                                    <span style={{ color: '#a0a0a0' }}>CA Total :</span>
+                                                    <span style={{ color: '#fff', fontWeight: 500 }}>{d.value.toLocaleString()} €</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }}
                         />
                         <Legend
                             verticalAlign="bottom"
@@ -224,6 +242,7 @@ export function ZonePieChart({ data }: { data: any[] }) {
                         <thead>
                             <tr style={{ borderBottom: '1px solid #333', color: '#888', textAlign: 'left' }}>
                                 <th style={{ padding: '8px' }}>Zone</th>
+                                <th style={{ padding: '8px', textAlign: 'right' }}>Nb</th>
                                 <th style={{ padding: '8px', textAlign: 'right' }}>CA</th>
                                 <th style={{ padding: '8px', textAlign: 'right' }}>%</th>
                             </tr>
@@ -234,6 +253,9 @@ export function ZonePieChart({ data }: { data: any[] }) {
                                     <td style={{ padding: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: COLORS[index % COLORS.length] }}></span>
                                         {item.name}
+                                    </td>
+                                    <td style={{ padding: '8px', textAlign: 'right', color: '#fff' }}>
+                                        {item.count}
                                     </td>
                                     <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500 }}>
                                         {item.value.toLocaleString()} €
