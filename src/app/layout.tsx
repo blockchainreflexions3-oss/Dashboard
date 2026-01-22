@@ -18,16 +18,13 @@ export default function RootLayout({
                 <nav style={{ borderBottom: '1px solid var(--border-color)', padding: '0.8rem 0', marginBottom: '2rem' }}>
                     <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(255,255,255,0.03)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '16px',
-                            overflow: 'hidden',
-                            width: '180px',
-                            height: '60px'
+                            fontSize: '1.2rem',
+                            fontWeight: 700,
+                            fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                            color: '#FF69B4', // HotPink or use a softer pink like #ffb7c5 depending on preference. Using a nice vibrant pink.
+                            letterSpacing: '-0.5px'
                         }}>
-                            <Image src="/logo-prova.png" alt="Lyon Offices Data" width={180} height={60} style={{ objectFit: 'cover' }} priority />
+                            Dashboard CALVIN
                         </div>
                         <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.9rem' }}>
                             <a href="/" style={{ color: 'var(--text-primary)' }}>Vue d'ensemble</a>
