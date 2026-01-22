@@ -59,37 +59,74 @@ async function getDashboardData(period: string) {
     // (Considère que les avis de valeur font partie du panier moyen des signatures)
     const avgFee = totalSignatures > 0 ? totalRevenue / totalSignatures : 0;
 
-    // Process Revenue History (Group by Month)
-    // Use JS Map for easy aggregation: "YYYY-MM" -> value
-    const historyMap = new Map<string, number>();
+    // Generate complete timeline based on period
+    let startDate: Date;
+    let endDate: Date;
+
+    if (period === '2024') {
+        startDate = new Date('2024-01-01');
+        endDate = new Date('2024-12-31');
+    } else if (period === '2025') {
+        startDate = new Date('2025-01-01');
+        endDate = new Date('2025-12-31');
+    } else if (period === '2026') {
+        startDate = new Date('2026-01-01');
+        endDate = new Date('2026-12-31');
+    } else if (period === '3m') {
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 2); // Current + prev 2
+        startDate.setDate(1);
+        endDate = new Date();
+    } else if (period === '6m') {
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 5);
+        startDate.setDate(1);
+        endDate = new Date();
+    } else {
+        // 'all' case: find min and max from deals or default to current year
+        if (deals.length > 0) {
+            const dates = deals.map((d: any) => new Date(d.signatureDate).getTime());
+            startDate = new Date(Math.min(...dates));
+            endDate = new Date(Math.max(...dates));
+            // Snap to start of month
+            startDate.setDate(1);
+        } else {
+            // Default to current year if empty
+            const y = new Date().getFullYear();
+            startDate = new Date(`${y}-01-01`);
+            endDate = new Date(`${y}-12-31`);
+        }
+    }
+
+    // Helper to generate all months between dates
+    const allMonths: { month: string; sortDate: Date; revenue: number }[] = [];
+    const iterator = new Date(startDate);
+    iterator.setDate(1); // Force start of month
+
+    while (iterator <= endDate || iterator.getMonth() === endDate.getMonth() && iterator.getFullYear() === endDate.getFullYear()) {
+        const key = iterator.toLocaleString('fr-FR', { month: 'short', year: '2-digit' });
+        // Check if we already added this key (handle edge case of tight loops)
+        if (!allMonths.find(m => m.month === key)) {
+            allMonths.push({
+                month: key,
+                sortDate: new Date(iterator),
+                revenue: 0
+            });
+        }
+        iterator.setMonth(iterator.getMonth() + 1);
+    }
+
+    // Fill with actual data
     deals.forEach((d: any) => {
         const date = new Date(d.signatureDate);
-        // Format Month short: "Jan 24", "Feb 24"... to distinguish years if mixed
         const key = date.toLocaleString('fr-FR', { month: 'short', year: '2-digit' });
-        historyMap.set(key, (historyMap.get(key) || 0) + d.agencyFee);
+        const monthItem = allMonths.find(m => m.month === key);
+        if (monthItem) {
+            monthItem.revenue += d.agencyFee;
+        }
     });
 
-    // Create robust keys order. 
-    // Naive loop through actual data keys to respect sparse data or multi-year
-    const revenueHistory = Array.from(historyMap.entries()).map(([month, revenue]) => ({
-        month,
-        revenue
-    })).reverse(); // Map iterates insertion order? No reliable.
-    // Better: Sort by date.
-    // Re-do history map with sortable keys
-    const historyList = deals.reduce((acc: any[], d: any) => {
-        const date = new Date(d.signatureDate);
-        const key = date.toLocaleString('fr-FR', { month: 'short', year: '2-digit' });
-        const exist = acc.find(item => item.month === key);
-        if (exist) {
-            exist.revenue += d.agencyFee;
-        } else {
-            acc.push({ month: key, revenue: d.agencyFee, sortDate: date });
-        }
-        return acc;
-    }, []);
-    // Sort ascending for chart
-    historyList.sort((a: any, b: any) => a.sortDate.getTime() - b.sortDate.getTime());
+    const historyList = allMonths; // Already sorted by creation
 
     // Calculate Cumulative
     let runningTotal = 0;

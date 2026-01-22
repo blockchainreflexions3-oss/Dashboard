@@ -51,7 +51,14 @@ export function RevenueChart({ data }: { data: any[] }) {
             <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={data} margin={{ top: 10, right: 20, bottom: 5, left: 10 }}>
                     <CartesianGrid stroke="#333" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="month" stroke="#a0a0a0" fontSize={11} tickLine={false} axisLine={false} />
+                    <XAxis
+                        dataKey="month"
+                        stroke="#a0a0a0"
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                        interval={data.length > 15 ? 'preserveStartEnd' : 0}
+                    />
                     <YAxis
                         stroke="#a0a0a0"
                         fontSize={11}
