@@ -69,11 +69,22 @@ function deduceZone(zip: string): string {
         return `LYON_${arr}`;
     }
     // Liste définie comme "Est" dans le besoin métier ou approximatif
-    const estCodes = ["69100", "69800", "69740", "69680", "69960"];
+    const estCodes = [
+        "69100", "69200", "69120", "69800", "69500",
+        "69740", "69190", "69960", "69680", "69330",
+        "69150", "69780"
+    ];
     if (estCodes.includes(cleanZip)) return "EST_LYONNAIS";
 
+    // Liste définie comme "Ouest"
+    const ouestCodes = [
+        "69230", "69390", "69530", "69540", "69630",
+        "69110", "69600", "69340", "69160", "69440"
+    ];
+    if (ouestCodes.includes(cleanZip)) return "OUEST_LYONNAIS";
+
     // Quick default for others
-    return "OUEST_LYONNAIS";
+    return "AUTRE";
 }
 
 export async function syncFromGoogleSheet() {
