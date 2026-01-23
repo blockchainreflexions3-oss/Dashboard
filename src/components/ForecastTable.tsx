@@ -85,7 +85,7 @@ export function ForecastTable({ deals }: { deals: ForecastDeal[] }) {
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Bailleur / Preneur</div>
                     </th>
                     <th style={thStyle} onClick={() => handleSort('amount')}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Est. Honoraires <SortIcon field="amount" /></div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Honoraires <SortIcon field="amount" /></div>
                     </th>
                 </tr>
             </thead>

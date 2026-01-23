@@ -40,7 +40,7 @@ export default async function ForecastPage() {
                     </div>
                 </div>
                 <div className="card">
-                    <div className="text-muted">Panier Moyen</div>
+                    <div className="text-muted">Honoraires Moyens</div>
                     <div className="kpi-value">
                         {avgDealSize.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
                     </div>
