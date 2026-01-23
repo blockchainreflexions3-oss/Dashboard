@@ -13,7 +13,7 @@ export function NavBar() {
     };
 
     const linkStyle = (path: string) => ({
-        color: isActive(path) ? 'var(--text-primary)' : 'var(--text-secondary)',
+        color: isActive(path) ? '#FF69B4' : 'var(--text-secondary)',
         fontWeight: isActive(path) ? 600 : 400,
         textDecoration: 'none',
         transition: 'color 0.2s ease',
